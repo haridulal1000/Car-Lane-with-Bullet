@@ -46,6 +46,8 @@ function setup() {
   obstacles = [];
   bullets = [];
   obstacleSpeed = 5;
+  bulletTime=0;
+  reload=false;
   scoreboard.style.display = "block";
   scoreboard.innerHTML = `${point}`;
   canvas.style.display = "block";
