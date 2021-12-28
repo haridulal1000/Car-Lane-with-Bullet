@@ -11,10 +11,10 @@ let restartBtn = document.getElementById("restart");
 let frameCount;
 let point;
 let highScore;
-let bulletTime=0;
-let ammo=new Image();
-let ammoDim=50;
-let reload=false;
+let bulletTime = 0;
+let ammo = new Image();
+let ammoDim = 50;
+let reload = false;
 canvas.setAttribute("width", width);
 canvas.setAttribute("height", height);
 let player;
@@ -24,7 +24,7 @@ let animation;
 let gameState = 0;
 let road;
 
-let temp = localStorage.getItem("highScore");
+let temp = localStorage.getItem("highScore2");
 if (temp) {
   highScore = temp;
 } else {
@@ -44,22 +44,22 @@ function setup() {
   point = 0;
   frameCount = 0;
   obstacles = [];
-  bullets=[];
+  bullets = [];
   obstacleSpeed = 5;
   scoreboard.style.display = "block";
   scoreboard.innerHTML = `${point}`;
   canvas.style.display = "block";
   player = new Player();
   obstacles.push(new Obstacle());
-  ammo.src='./images/ammo.png';
+  ammo.src = "./images/ammo.png";
   loop();
 }
 
 function draw() {
   road.moveRoad();
-  if(frameCount-bulletTime>reloadTime){
-    context.drawImage(ammo,ammoDim/2,ammoDim/2,ammoDim,ammoDim);
-    reload=true;
+  if (frameCount - bulletTime > reloadTime) {
+    context.drawImage(ammo, ammoDim / 2, ammoDim / 2, ammoDim, ammoDim);
+    reload = true;
   }
   player.show();
   player.update();
@@ -73,7 +73,6 @@ function draw() {
       gameState = 2;
       gameOver();
     }
-   
 
     if (obstacles[i].pointUp(player)) {
       point++;
@@ -83,11 +82,11 @@ function draw() {
       obstacles.splice(i, 1);
     }
   }
-  if(obstacles.length!==0){
-  if (obstacles[obstacles.length - 1].y > 500) {
-    obstacles.push(new Obstacle());
-  }
-  }else{
+  if (obstacles.length !== 0) {
+    if (obstacles[obstacles.length - 1].y > 500) {
+      obstacles.push(new Obstacle());
+    }
+  } else {
     obstacles.push(new Obstacle());
   }
   frameCount++;
@@ -101,26 +100,25 @@ function draw() {
     loop();
   }
 
-
   for (let i = bullets.length - 1; i >= 0; i--) {
     bullets[i].show();
     bullets[i].update();
-    if(bullets[i].edge()){
-      bullets.splice(i,1);
+    if (bullets[i].edge()) {
+      bullets.splice(i, 1);
     }
   }
-  for(let i=obstacles.length-1;i>=0;i--){
-  for(let j=bullets.length-1;j>=0;j--){
-    if (bullets[j].collides(obstacles[i])) {
-      let crash = new Audio("./sounds/crash.mp3");
-      crash.play();
-      bullets.splice(j,1);
-      obstacles.splice(i,1);
-      point++;
-      scoreboard.innerHTML = `${point}`;
+  for (let i = obstacles.length - 1; i >= 0; i--) {
+    for (let j = bullets.length - 1; j >= 0; j--) {
+      if (bullets[j].collides(obstacles[i])) {
+        let crash = new Audio("./sounds/crash.mp3");
+        crash.play();
+        bullets.splice(j, 1);
+        obstacles.splice(i, 1);
+        point++;
+        scoreboard.innerHTML = `${point}`;
+      }
     }
   }
-}
 }
 function loop() {
   animation = window.requestAnimationFrame(draw);
@@ -145,9 +143,9 @@ function gameOver() {
   canvas.style.display = "none";
   if (point > highScore) {
     highScore = point;
-    localStorage.setItem("highScore", point);
+    localStorage.setItem("highScore2", point);
   } else {
-    localStorage.setItem("highScore", highScore);
+    localStorage.setItem("highScore2", highScore);
   }
   currentHS.innerHTML = `High Score: ${highScore}`;
 }
@@ -161,11 +159,11 @@ window.addEventListener("keypress", function (e) {
     let honk = new Audio("./sounds/honk.wav");
     honk.play();
   }
-  if(e.key===' ' && gameState===1){
-    if(reload){
-    bullets.push(new Bullet(player.x,player.y));
-    bulletTime=frameCount;
-    reload=false;
+  if (e.key === " " && gameState === 1) {
+    if (reload) {
+      bullets.push(new Bullet(player.x, player.y));
+      bulletTime = frameCount;
+      reload = false;
     }
   }
 });
