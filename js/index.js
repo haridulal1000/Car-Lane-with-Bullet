@@ -11,10 +11,15 @@ let restartBtn = document.getElementById("restart");
 let frameCount;
 let point;
 let highScore;
+let bulletTime=0;
+let ammo=new Image();
+let ammoDim=50;
+let reload=false;
 canvas.setAttribute("width", width);
 canvas.setAttribute("height", height);
 let player;
 let obstacles;
+let bullets;
 let animation;
 let gameState = 0;
 let road;
@@ -39,17 +44,23 @@ function setup() {
   point = 0;
   frameCount = 0;
   obstacles = [];
+  bullets=[];
   obstacleSpeed = 5;
   scoreboard.style.display = "block";
   scoreboard.innerHTML = `${point}`;
   canvas.style.display = "block";
   player = new Player();
   obstacles.push(new Obstacle());
+  ammo.src='./images/ammo.png';
   loop();
 }
 
 function draw() {
   road.moveRoad();
+  if(frameCount-bulletTime>reloadTime){
+    context.drawImage(ammo,ammoDim/2,ammoDim/2,ammoDim,ammoDim);
+    reload=true;
+  }
   player.show();
   player.update();
   for (let i = obstacles.length - 1; i >= 0; i--) {
@@ -62,6 +73,8 @@ function draw() {
       gameState = 2;
       gameOver();
     }
+   
+
     if (obstacles[i].pointUp(player)) {
       point++;
       scoreboard.innerHTML = `${point}`;
@@ -70,7 +83,11 @@ function draw() {
       obstacles.splice(i, 1);
     }
   }
+  if(obstacles.length!==0){
   if (obstacles[obstacles.length - 1].y > 500) {
+    obstacles.push(new Obstacle());
+  }
+  }else{
     obstacles.push(new Obstacle());
   }
   frameCount++;
@@ -83,6 +100,27 @@ function draw() {
   if (gameState === 1) {
     loop();
   }
+
+
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    bullets[i].show();
+    bullets[i].update();
+    if(bullets[i].edge()){
+      bullets.splice(i,1);
+    }
+  }
+  for(let i=obstacles.length-1;i>=0;i--){
+  for(let j=bullets.length-1;j>=0;j--){
+    if (bullets[j].collides(obstacles[i])) {
+      let crash = new Audio("./sounds/crash.mp3");
+      crash.play();
+      bullets.splice(j,1);
+      obstacles.splice(i,1);
+      point++;
+      scoreboard.innerHTML = `${point}`;
+    }
+  }
+}
 }
 function loop() {
   animation = window.requestAnimationFrame(draw);
@@ -122,5 +160,12 @@ window.addEventListener("keypress", function (e) {
   if (e.key === "h" && gameState === 1) {
     let honk = new Audio("./sounds/honk.wav");
     honk.play();
+  }
+  if(e.key===' ' && gameState===1){
+    if(reload){
+    bullets.push(new Bullet(player.x,player.y));
+    bulletTime=frameCount;
+    reload=false;
+    }
   }
 });
