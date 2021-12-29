@@ -8,7 +8,12 @@ function Player() {
   this.state = 0;
   this.image = new Image();
   this.image.src = "./images/player.png";
+  this.imageRight=new Image();
+  this.imageRight.src='./images/car-right.png'
+  this.imageLeft=new Image();
+  this.imageLeft.src='./images/car-left.png'
   this.show = function () {
+    if(this.state===0){
     context.drawImage(
       this.image,
       this.x - this.width / 2,
@@ -16,6 +21,25 @@ function Player() {
       this.width,
       this.height
     );
+    }
+    if(this.state===1){
+      context.drawImage(
+        this.imageLeft,
+        this.x - this.width / 2-5,
+        this.y - this.height / 2,
+        this.width+10,
+        this.height
+      );
+      }
+      if(this.state===2){
+        context.drawImage(
+          this.imageRight,
+          this.x - this.width / 2-5,
+          this.y - this.height / 2,
+          this.width+10,
+          this.height
+        );
+        }
   };
   this.update = function () {
     if (this.state === 0) {
